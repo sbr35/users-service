@@ -1,1 +1,1 @@
-# wallets users
+# A Microservice written in Golang for user registration and login. This microservice is written for wallets projects. wallets is a distributed system to track daily expenses if there are millions of user 
