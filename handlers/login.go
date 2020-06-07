@@ -14,88 +14,38 @@ import (
 	"github.com/sbr35/wallets-users/models"
 	"github.com/twinj/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user models.User
-	body, _ := ioutil.ReadAll(r.Body)
-	err := json.Unmarshal(body, &user)
-	var res models.Response
-
-	if err != nil {
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(res)
-		return
-	}
-
-	collection, err := db.UsersCollection()
-
-	if err != nil {
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(res)
-		return
-	}
-
-	var result models.User
-	err = collection.FindOne(context.TODO(), bson.D{{"email", user.Email}}).Decode(&result)
-
-	if err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
-
-			if err != nil {
-				res.Error = "Error while Hashing Password, Try Again"
-				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(res)
-				return
-			}
-
-			user.Password = string(hash)
-			_, err = collection.InsertOne(context.TODO(), user)
-
-			if err != nil {
-				res.Error = "Error While Creating User, Try Again"
-				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(res)
-				return
-			}
-
-			res.Result = "Registration Successful"
-			json.NewEncoder(w).Encode(res)
-			return
-		}
-		res.Error = err.Error()
-		json.NewEncoder(w).Encode(res)
-		return
-	}
-	res.Result = "Username already Exists!!"
-	w.WriteHeader(http.StatusForbidden)
-	json.NewEncoder(w).Encode(res)
-	return
+type Login struct {
+	logger *log.Logger
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func NewLogin(logger *log.Logger) *Login {
+	return &Login{logger}
+}
+
+func (login *Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user models.User
 	body, _ := ioutil.ReadAll(r.Body)
 	err := json.Unmarshal(body, &user)
 
 	if err != nil {
-		log.Fatal(err)
+		login.logger.Fatal(err)
 	}
 
 	collection, err := db.UsersCollection()
 
 	if err != nil {
-		log.Fatal(err)
+		login.logger.Fatal(err)
 	}
 
 	var result models.User
 	var res models.Response
 
-	err = collection.FindOne(context.TODO(), bson.D{{"email", user.Email}}).Decode(&result)
+	err = collection.FindOne(context.TODO(), bson.D{primitive.E{Key: "email", Value: user.Email}}).Decode(&result)
 
 	if err != nil {
 		res.Error = "Invalid Email"

@@ -1,18 +1,55 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/sbr35/wallets-users/handlers"
-
-	"github.com/gorilla/mux"
 )
 
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/register", handlers.RegisterHandler).Methods("POST")
-	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
-	log.Println("Listen on localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	logger := log.New(os.Stdout, "wallets-users", log.LstdFlags)
+	registerHandler := handlers.NewRegister(logger)
+	loginHandler := handlers.NewLogin(logger)
+	ServeMux := http.NewServeMux()
+	ServeMux.Handle("/register", registerHandler)
+	ServeMux.Handle("/login", loginHandler)
+
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      logRequest(ServeMux, logger),
+		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
+	}
+
+	go func() {
+		logger.Println("Server Started at port 8080")
+		err := server.ListenAndServe()
+		if err != nil {
+			logger.Fatal(err)
+		}
+	}()
+
+	signalChannel := make(chan os.Signal)
+	signal.Notify(signalChannel, os.Interrupt)
+	signal.Notify(signalChannel, os.Kill)
+
+	sig := <-signalChannel
+	logger.Println("Received Terminate, graceful shutdown", sig)
+
+	tc, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	server.Shutdown(tc)
+}
+
+func logRequest(handler http.Handler, logger *log.Logger) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		handler.ServeHTTP(w, r)
+	})
 }
