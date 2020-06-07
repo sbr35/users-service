@@ -1,20 +1,20 @@
 package handlers
 
 import (
-	"time"
-	"log"
-	"os"
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
-	"github.com/sbr35/wallets/services/users/db"
-	"github.com/sbr35/wallets/services/users/models"
+	"os"
+	"time"
+
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/sbr35/wallets-users/db"
+	"github.com/sbr35/wallets-users/models"
+	"github.com/twinj/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/twinj/uuid"
-	jwt "github.com/dgrijalva/jwt-go"
-
 )
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +41,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var result models.User
 	err = collection.FindOne(context.TODO(), bson.D{{"email", user.Email}}).Decode(&result)
 
-	if(err != nil){
+	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
 			hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
 
@@ -76,17 +76,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request){
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user models.User
 	body, _ := ioutil.ReadAll(r.Body)
-	err := json.Unmarshal(body, &user);
+	err := json.Unmarshal(body, &user)
 
-	if(err != nil){
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	collection, err := db.UsersCollection();
+	collection, err := db.UsersCollection()
 
 	if err != nil {
 		log.Fatal(err)
@@ -95,8 +95,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request){
 	var result models.User
 	var res models.Response
 
-	err = collection.FindOne(context.TODO(), bson.D{{"email", user.Email}}).Decode(&result);
-	
+	err = collection.FindOne(context.TODO(), bson.D{{"email", user.Email}}).Decode(&result)
+
 	if err != nil {
 		res.Error = "Invalid Email"
 		w.WriteHeader(http.StatusForbidden)
@@ -104,7 +104,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(user.Password));
+	err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(user.Password))
 
 	if err != nil {
 		res.Error = "Invalid Password"
@@ -128,7 +128,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request){
 	return
 }
 
-func TokenCreator(user_email string) (*models.LoginToken, error){
+func TokenCreator(user_email string) (*models.LoginToken, error) {
 	token := &models.LoginToken{}
 	token.AtExpires = time.Now().Add(time.Minute * 15).Unix()
 	token.AccessUuid = uuid.NewV4().String()
@@ -138,7 +138,7 @@ func TokenCreator(user_email string) (*models.LoginToken, error){
 
 	accessTokenClaim := jwt.MapClaims{}
 	accessTokenClaim["access_uuid"] = token.AccessUuid
-	accessTokenClaim["user_email"] =  user_email
+	accessTokenClaim["user_email"] = user_email
 	accessTokenClaim["expires"] = token.AtExpires
 
 	newAccessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaim)
@@ -146,7 +146,6 @@ func TokenCreator(user_email string) (*models.LoginToken, error){
 	if err != nil {
 		return nil, err
 	}
-
 
 	refreshTokenClaim := jwt.MapClaims{}
 	refreshTokenClaim["refresh_uuid"] = token.RefreshUuid

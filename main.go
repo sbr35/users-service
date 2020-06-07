@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"github.com/sbr35/wallets/services/users/handlers"
+
+	"github.com/sbr35/wallets-users/handlers"
 
 	"github.com/gorilla/mux"
 )

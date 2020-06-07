@@ -1,4 +1,4 @@
-module github.com/sbr35/wallets/services/users
+module github.com/sbr35/wallets-users
 
 go 1.14
 
