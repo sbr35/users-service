@@ -38,6 +38,7 @@ func (reg *Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	collection, err := db.UsersCollection()
 
 	if err != nil {
+		reg.logger.Fatal(err)
 		res.Error = err.Error()
 		json.NewEncoder(w).Encode(res)
 		return
