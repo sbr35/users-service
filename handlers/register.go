@@ -76,6 +76,7 @@ func (reg *Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(res)
 		return
 	}
+	reg.logger.Println(err)
 	res.Result = "Username already Exists!!"
 	w.WriteHeader(http.StatusForbidden)
 	json.NewEncoder(w).Encode(res)

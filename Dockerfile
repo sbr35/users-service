@@ -8,10 +8,14 @@ WORKDIR /go/src/github.com/sbr35/wallets-users/
 COPY . /go/src/github.com/sbr35/wallets-users/
 RUN go mod download
 EXPOSE 8080
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+#RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+#RUN go build -o app .
+#CMD ["go", "run", "main.go"]
+CMD go get github.com/pilu/fresh && \
+    fresh;
 
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=builder /go/src/github.com/sbr35/wallets-users/app .
-CMD ["./app"]
+#FROM alpine:latest
+#RUN apk --no-cache add ca-certificates
+#WORKDIR /root/
+#COPY --from=builder /go/src/github.com/sbr35/wallets-users/app .
+#CMD ["./app"]

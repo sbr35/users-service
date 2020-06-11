@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: server
+    volumes:
+      - .:/go/src/github.com/sbr35/wallets-users/
     env_file:
       - .env
     ports:
