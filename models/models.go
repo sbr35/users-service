@@ -1,5 +1,7 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Response struct {
 	Error  string `json:"error"`
 	Result string `json:"result"`
@@ -19,8 +21,11 @@ type LoginResponse struct {
 }
 
 type User struct {
-	Email     string `json:"email"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Password  string `json:"password"`
+	ID        primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+	Email     string             `json:"email"`
+	FirstName string             `json:"firstname"`
+	LastName  string             `json:"lastname"`
+	Password  string             `json:"-"`
 }
+
+type Users []*User

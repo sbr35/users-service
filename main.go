@@ -13,10 +13,10 @@ import (
 
 func main() {
 	logger := log.New(os.Stdout, "wallets-users", log.LstdFlags)
-	registerHandler := handlers.NewRegister(logger)
+	registerHandler := handlers.NewUserHandler(logger)
 	loginHandler := handlers.NewLogin(logger)
 	ServeMux := http.NewServeMux()
-	ServeMux.Handle("/register", registerHandler)
+	ServeMux.Handle("/wallets/api/v1/users", registerHandler)
 	ServeMux.Handle("/login", loginHandler)
 
 	server := &http.Server{
