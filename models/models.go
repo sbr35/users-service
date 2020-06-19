@@ -8,16 +8,43 @@ type Response struct {
 }
 
 type LoginToken struct {
-	AccessToken  string `json:"accesstoken"`
-	RefreshToken string `json:"refreshtoken"`
-	AccessUuid   string `json:"accessuuid"`
-	RefreshUuid  string `json:"refreshuuid"`
-	AtExpires    int64  `json:"atexpires"`
-	RtExpires    int64  `json:"rtexpires"`
+	AccessToken string `json:"accesstoken"`
+	AccessUuid  string `json:"accessuuid"`
+	AtExpires   int64  `json:"atexpires"`
 }
 
 type LoginResponse struct {
-	Token *LoginToken `json:"token"`
+	ID    primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+	Token *LoginToken        `json:"token"`
+}
+
+type RegistrationResponse struct {
+	ID     primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+	Result string             `json:"result"`
+}
+
+type UpdateResponse struct {
+	Result string `json:"result"`
+}
+
+type RegistrationParams struct {
+	Email     string `json:"email"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	Password  string `json:"password"`
+}
+
+type LoginParams struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type UpdateParams struct {
+	ID        string `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	Password  string `json:"password"`
 }
 
 type User struct {

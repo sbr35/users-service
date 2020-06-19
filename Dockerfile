@@ -14,6 +14,7 @@ EXPOSE 8080
 CMD go get github.com/pilu/fresh && \
     fresh;
 
+#This is for Production to reduce the image size#
 #FROM alpine:latest
 #RUN apk --no-cache add ca-certificates
 #WORKDIR /root/
