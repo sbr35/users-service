@@ -8,13 +8,18 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/sbr35/wallets-users/db"
 	"github.com/sbr35/wallets-users/handlers"
 )
 
 func main() {
 	logger := log.New(os.Stdout, "users-api ", log.LstdFlags)
-	registerHandler := handlers.NewUserHandler(logger)
-	loginHandler := handlers.NewLogin(logger)
+	collection, err := db.UsersCollection()
+	if err != nil {
+		log.Fatal(err)
+	}
+	registerHandler := handlers.NewUserHandler(logger, collection)
+	loginHandler := handlers.NewLogin(logger, collection)
 	ServeMux := http.NewServeMux()
 	ServeMux.Handle("/users/api/v1/crud", registerHandler)
 	ServeMux.Handle("/users/api/v1/login", loginHandler)

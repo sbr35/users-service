@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/sbr35/wallets-users/db"
 	"github.com/sbr35/wallets-users/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,14 +22,9 @@ func (handler *UserHandler) SignUp(w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return NewHTTPError(err, "Error in body parsing", 400)
 	}
-	collection, err := db.UsersCollection()
-
-	if err != nil {
-		return NewHTTPError(err, "Database server is not responding", 500)
-	}
 
 	var result models.User
-	err = collection.FindOne(context.TODO(), bson.D{primitive.E{Key: "email", Value: user.Email}}).Decode(&result)
+	err = handler.collection.FindOne(context.TODO(), bson.D{primitive.E{Key: "email", Value: user.Email}}).Decode(&result)
 
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
@@ -41,7 +35,7 @@ func (handler *UserHandler) SignUp(w http.ResponseWriter, r *http.Request) error
 			}
 
 			user.Password = string(hash)
-			resp, err := collection.InsertOne(context.TODO(), user)
+			resp, err := handler.collection.InsertOne(context.TODO(), user)
 			if err != nil {
 				return NewHTTPError(err, "Error in Saving user information", 400)
 			}

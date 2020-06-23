@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/sbr35/wallets-users/db"
 	"github.com/sbr35/wallets-users/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -56,17 +55,11 @@ func (handler *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) e
 		updateParams["password"] = string(hash)
 	}
 
-	collection, err := db.UsersCollection()
-
-	if err != nil {
-		return NewHTTPError(err, "Database server is not responding", 500)
-	}
-
 	updateBson := bson.M{
 		"$set": updateParams,
 	}
 
-	_, err = collection.UpdateOne(
+	_, err = handler.collection.UpdateOne(
 		context.TODO(),
 		bson.M{"_id": userid},
 		updateBson,
