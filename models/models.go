@@ -40,7 +40,6 @@ type LoginParams struct {
 }
 
 type UpdateParams struct {
-	ID        string `json:"id"`
 	Email     string `json:"email"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`

@@ -29,6 +29,10 @@ func (handler *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		err = handler.GetInfo(w, r)
 	}
 
+	if r.Method == http.MethodDelete {
+		err = handler.DeleteUser(w, r)
+	}
+
 	if err == nil {
 		w.WriteHeader(200)
 		return

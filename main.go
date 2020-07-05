@@ -21,11 +21,11 @@ func main() {
 	registerHandler := handlers.NewUserHandler(logger, collection)
 	loginHandler := handlers.NewLogin(logger, collection)
 	ServeMux := http.NewServeMux()
-	ServeMux.Handle("/users/api/v1/crud", registerHandler)
-	ServeMux.Handle("/users/api/v1/login", loginHandler)
+	ServeMux.Handle("/api/v1/users", registerHandler)
+	ServeMux.Handle("/api/v1/users/login", loginHandler)
 
 	server := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":" + os.Getenv("PORT"),
 		Handler:      logRequest(ServeMux, logger),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,

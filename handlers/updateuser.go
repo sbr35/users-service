@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/sbr35/wallets-users/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,19 +29,11 @@ func (handler *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return NewHTTPError(err, "Error in parsing request body", 400)
 	}
-
-	if params.ID == "" {
-		return NewHTTPError(nil, "Provide right user information", 400)
+	if int64(claims["expires"].(float64)) < time.Now().Unix() {
+		return NewHTTPError(nil, "Session Timeout. Log In again", 400)
 	}
-	if params.ID != claims["userid"].(string) {
-		return NewHTTPError(nil, "Authentication Failed. User ID doesn't match with authorization token", 400)
-	}
-
-	userid, err := primitive.ObjectIDFromHex(params.ID)
+	userid, err := primitive.ObjectIDFromHex(claims["userid"].(string))
 	updateParams := bson.M{}
-	if params.Email != "" {
-		updateParams["email"] = params.Email
-	}
 	if params.FirstName != "" {
 		updateParams["firstname"] = params.FirstName
 	}
