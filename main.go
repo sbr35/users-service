@@ -18,10 +18,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	registerHandler := handlers.NewUserHandler(logger, collection)
+	usersHandler := handlers.NewUserHandler(logger, collection)
 	loginHandler := handlers.NewLogin(logger, collection)
 	ServeMux := http.NewServeMux()
-	ServeMux.Handle("/api/v1/users", registerHandler)
+	ServeMux.Handle("/api/v1/users", usersHandler)
 	ServeMux.Handle("/api/v1/users/login", loginHandler)
 
 	server := &http.Server{
