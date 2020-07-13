@@ -4,11 +4,11 @@ FROM golang:1.14 AS builder
 LABEL maintainer="Shohidul bari <shohidulbari18@gmail.com>"
 ENV GOPROXY="direct"
 
-WORKDIR /go/src/github.com/sbr35/wallets-users/
-COPY go.mod go.sum /go/src/github.com/sbr35/wallets-users/
+WORKDIR /go/src/github.com/sbr35/users-service/
+COPY go.mod go.sum /go/src/github.com/sbr35/users-service/
 RUN go mod download
 
-COPY . /go/src/github.com/sbr35/wallets-users/
+COPY . /go/src/github.com/sbr35/users-service/
 EXPOSE 8080
 #This is for automatic-reload. Remove when development stage is complete
 CMD go get github.com/pilu/fresh && \

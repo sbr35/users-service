@@ -1,4 +1,4 @@
-module github.com/sbr35/wallets-users
+module github.com/sbr35/users-service
 
 go 1.14
 
@@ -8,6 +8,7 @@ require (
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/pilu/config v0.0.0-20131214182432-3eb99e6c0b9a // indirect
 	github.com/pilu/fresh v0.0.0-20190826141211-0fa698148017 // indirect
+	github.com/sbr35/wallets-users v0.0.0-20200705110235-7f0c412395d3
 	github.com/twinj/uuid v1.0.0
 	go.mongodb.org/mongo-driver v1.3.3
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37

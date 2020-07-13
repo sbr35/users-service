@@ -7,7 +7,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/sbr35/wallets-users/models"
+	"github.com/sbr35/users-service/models"
 	"github.com/twinj/uuid"
 )
 

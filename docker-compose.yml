@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: server
     volumes:
-      - .:/go/src/github.com/sbr35/wallets-users/
+      - .:/go/src/github.com/sbr35/users-service/
     env_file:
       - .env
     ports:

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sbr35/wallets-users/models"
+	"github.com/sbr35/users-service/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

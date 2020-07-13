@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/sbr35/wallets-users/db"
-	"github.com/sbr35/wallets-users/models"
+	"github.com/sbr35/users-service/db"
+	"github.com/sbr35/users-service/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
